@@ -1,13 +1,18 @@
 # 机器人自动上下5步，循环联合仿真
 
-
-
+<video controls>
+    <source src="sima自动上下.mp4" type="video/mp4">
+    您的浏览器不支持视频播放。
+</video>
 
 
 # 机器人键盘控制，循环联合仿真
 
 
-
+<video controls>
+    <source src="simc控制运动.mp4" type="video/mp4">
+    您的浏览器不支持视频播放。
+</video>
 
 
 
