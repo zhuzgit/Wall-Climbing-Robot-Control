@@ -1,10 +1,10 @@
 # 机器人自动上下5步，循环联合仿真
 
-![Uploading sima.gif…]()
+<img width="480" height="270" alt="sima" src="https://github.com/user-attachments/assets/2c655f28-9018-401c-920a-c37b3f6a9be7" />
 
 # 机器人键盘控制，循环联合仿真
 
-![Uploading simc.gif…]()
+<img width="480" height="270" alt="simc" src="https://github.com/user-attachments/assets/b1d9c035-b1a2-4a5d-a41c-aa02d4aba5d0" />
 
  # 1. 电机初始化、控制和开启共享内存  moto.py
     
