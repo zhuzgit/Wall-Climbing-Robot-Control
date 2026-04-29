@@ -1,16 +1,10 @@
 # 机器人自动上下5步，循环联合仿真
 
-```HTML
-<video src="sima自动上下.mp4" controls="controls" width="500" height="300"></video>
-```
-
 
 
 # 机器人键盘控制，循环联合仿真
 
-```HTML
-<video src="simc控制运动.mp4" controls="controls" width="500" height="300"></video>
-```
+
 
 
  # 1. 电机初始化、控制和开启共享内存  moto.py
