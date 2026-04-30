@@ -70,8 +70,10 @@
 
 # 3.机器人受控运动，simc.py
 
->$ sudo python simc.py
->
+$ sudo python simc.py
+<img width="1382" height="344" alt="image" src="https://github.com/user-attachments/assets/38568043-3a37-486d-8112-e618c1001cd2" />
+
+
 >正在初始化共享内存...
 >
 >✔ 已成功连接到硬件底层 (moto.py)
