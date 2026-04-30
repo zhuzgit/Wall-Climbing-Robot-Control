@@ -36,10 +36,11 @@
 
 
 # 2. 机器人自动上下五步，循环往复  sima.py
+
+$ sudo python sima.py
+
  <img width="1826" height="338" alt="image" src="https://github.com/user-attachments/assets/03c62da0-8c00-437d-a2d3-aae7c7e0612d" />
 
->$ sudo python sima.py
->
 >正在初始化共享内存...
 >
 >✔ 已成功连接到硬件底层 (moto.py)
@@ -71,8 +72,8 @@
 # 3.机器人受控运动，simc.py
 
 $ sudo python simc.py
-<img width="1382" height="344" alt="image" src="https://github.com/user-attachments/assets/38568043-3a37-486d-8112-e618c1001cd2" />
 
+<img width="1382" height="344" alt="image" src="https://github.com/user-attachments/assets/38568043-3a37-486d-8112-e618c1001cd2" />
 
 >正在初始化共享内存...
 >
