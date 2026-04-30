@@ -171,7 +171,7 @@ try:
         "foot_3": np.array([0.0,  stance, -stance])
     }
 
-    print("正在计算黄金初始姿态...")
+    print("正在计算初始姿态...")
 
     T_world_base = np.eye(4)
     T_world_base[:3, :3] = np.array([[0,0,1],[0,-1,0],[1,0,0]])
@@ -338,8 +338,7 @@ try:
 
     golden_mj_qpos = data.qpos.copy()
 
-    print("=== 【全向键盘遥控 + 完美虚实解耦版】 ===")
-    print("已彻底修复坐标系扭曲Bug，加入数学光闸与姿态金钟罩！")
+    print("=== 【全向键盘遥控 + Placo Mujoco联合仿真 + 共享内存电机控制】 ===")
     print("🎮 鼠标点击终端窗口，使用键盘 ↑ ↓ ← → 控制机器人移动！")
     print("🔄 组合键旋转: (↑或↓) + ← 逆时针 | (↑或↓) + → 顺时针")
     print("图例: 🟨卸磁 | ⬛抬腿 | 🟩压腿 | 🟦加磁 | 🟪支撑")

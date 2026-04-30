@@ -38,7 +38,7 @@ try:
     # 尝试连接底层脚本 (moto.py) 创建的内存块
     shm_obj = shared_memory.SharedMemory(name=SHM_NAME)
     hw_connected = True
-    print("✔ 已成功连接到硬件底层 (moto.py)")
+    print("✔ 已成功连接到硬件底层、共享内存 (moto.py)")
 except FileNotFoundError:
     # 如果没开 moto.py，说明是纯仿真模式，自己建一块内存自己玩
     print("⚠ 未检测到硬件底层，创建仿真专用内存块...")
@@ -178,7 +178,7 @@ def get_base_z(t):
     else:                   # 后半段：下降
         return wall_mid_z + v_body * half_period - v_body * (t_mod - half_period)
 
-print("正在计算黄金初始姿态...")
+print("正在计算初始姿态...")
 
 # 为机器人的躯干(base_link)创建一个在三维空间中绝对锁死的框架任务
 T_world_base = np.eye(4)
@@ -351,10 +351,9 @@ foot_target_z = {name: foot_abs_z[name] for name in foot_nominals}
 
 golden_mj_qpos = data.qpos.copy()
 
-print("=== 【原版 100% 还原 + 虚实解耦防抖版】 ===")
-print("已彻底修复浮点漂移 KeyError！")
-print("仿真环境：完全还原您的 sim.py (5步上/下，350刚度对抗重力，不改动任何显示)")
-print("真实电机：专为空载环境调校 (低刚度，PT1滤波，取消差分速度)，彻底消灭抽搐！")
+print("=== 【Placo Mojoco联合仿真 + 共享内存控制电机】 ===")
+print("仿真环境：(5步循环上/下)")
+print("电机驱动：设定为空载调校 (低刚度，PT1滤波，取消差分速度)，防止电机抽搐！")
 print("图例: 🟨卸磁 | ⬛抬腿 | 🟩压腿 | 🟦加磁 | 🟪支撑")
 print("-" * 150)
 
