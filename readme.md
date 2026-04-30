@@ -7,8 +7,11 @@
 <img width="480" height="270" alt="simc" src="https://github.com/user-attachments/assets/b1d9c035-b1a2-4a5d-a41c-aa02d4aba5d0" />
 
  # 1. 电机初始化、控制和开启共享内存  moto.py
+
     
  $ sudo python moto.py 
+
+
 
 >正在配置 CAN 接口...
 >
@@ -33,7 +36,8 @@
 
 
 # 2. 机器人自动上下五步，循环往复  sima.py
- 
+ <img width="1826" height="338" alt="image" src="https://github.com/user-attachments/assets/03c62da0-8c00-437d-a2d3-aae7c7e0612d" />
+
 >$ sudo python sima.py
 >
 >正在初始化共享内存...
