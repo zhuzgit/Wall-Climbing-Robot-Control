@@ -14,9 +14,9 @@ pip install -r requirements.txt
 
 # 2. 机器人自动上下5步，循环联合仿真
 
-<img width="480" height="270" alt="sima" src="https://github.com/user-attachments/assets/2c655f28-9018-401c-920a-c37b3f6a9be7" />
-
 [SIMA高清视频](https://github.com/zhuzgit/Wall-Climbing-Robot-Control/blob/main/sima.mp4)
+
+<img width="480" height="270" alt="sima" src="https://github.com/user-attachments/assets/2c655f28-9018-401c-920a-c37b3f6a9be7" />
 
 # 3. 机器人键盘控制，循环联合仿真
 
