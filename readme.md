@@ -8,6 +8,10 @@ pip install pipreqs
 
 pipreqs /path/to/project --encoding=utf8 --force
 
+## 1.3 自动安装环境
+
+pip install -r requirements.txt
+
 # 2. 机器人自动上下5步，循环联合仿真
 
 <img width="480" height="270" alt="sima" src="https://github.com/user-attachments/assets/2c655f28-9018-401c-920a-c37b3f6a9be7" />
