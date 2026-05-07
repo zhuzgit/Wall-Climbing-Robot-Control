@@ -19,7 +19,7 @@ try:
     from pynput import keyboard
 except ImportError:
     print("\n[ERROR] 缺少键盘监听库 pynput！")
-    print("👉 请在终端执行: pip install pynput")
+    print("👉 请在终端执行: sudo pip install pynput")
     sys.exit(1)
 
 # ==========================================
