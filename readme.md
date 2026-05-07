@@ -1,3 +1,13 @@
+# 自动生成依赖关系
+
+## 安装 pipreqs
+
+pip install pipreqs
+
+## 生成 requirements.txt
+
+pipreqs /path/to/project --encoding=utf8 --force
+
 # 机器人自动上下5步，循环联合仿真
 
 <img width="480" height="270" alt="sima" src="https://github.com/user-attachments/assets/2c655f28-9018-401c-920a-c37b3f6a9be7" />
