@@ -172,6 +172,13 @@ see.sh 命令内容是
 >
 >(注：xx 取值为 00 到 11。例如 00, 01, 02 对应第一条腿的三个电机，依次类推)
 
+# 5. 视频压缩
+
+sudo apt install ffmpeg
+
+github限制25M,按比例无损压缩体积（调低 CRF 值，数字越高文件越小）
+
+ffmpeg -i input.mp4 -vcodec libx264 -crf 4 output.mp4
 
 
 
