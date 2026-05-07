@@ -1,22 +1,22 @@
-# 自动生成依赖关系
+# 1.自动生成依赖关系
 
-## 安装 pipreqs
+## 1.1 安装 pipreqs
 
 pip install pipreqs
 
-## 生成 requirements.txt
+## 1.2 生成 requirements.txt
 
 pipreqs /path/to/project --encoding=utf8 --force
 
-# 机器人自动上下5步，循环联合仿真
+# 2. 机器人自动上下5步，循环联合仿真
 
 <img width="480" height="270" alt="sima" src="https://github.com/user-attachments/assets/2c655f28-9018-401c-920a-c37b3f6a9be7" />
 
-# 机器人键盘控制，循环联合仿真
+# 3. 机器人键盘控制，循环联合仿真
 
 <img width="480" height="270" alt="simc" src="https://github.com/user-attachments/assets/b1d9c035-b1a2-4a5d-a41c-aa02d4aba5d0" />
 
- # 1. 电机初始化、控制和开启共享内存  moto.py
+ ## 3.1 电机初始化、控制和开启共享内存  moto.py
 
     
  $ sudo python moto.py 
@@ -45,7 +45,7 @@ pipreqs /path/to/project --encoding=utf8 --force
 
 
 
-# 2. 机器人自动上下五步，循环往复  sima.py
+## 3.2 机器人自动上下五步，循环往复  sima.py
 
 $ sudo python sima.py
 
@@ -79,7 +79,7 @@ $ sudo python sima.py
 
 [运行时间 | U向上n步 D向下n步] P（Placo环境 坐标和IMU） M（Mujoco环境 坐标和IMU）Ln 第几条腿：颜色代表状态 TauK是四个膝盖电机的实时物理输出扭矩（力矩）
 
-# 3.机器人受控运动，simc.py
+## 3.3 机器人受控运动，simc.py
 
 $ sudo python simc.py
 
@@ -113,7 +113,7 @@ $ sudo python simc.py
 
 [时间 命令：上下左右及正逆时针旋转]  P（Placo环境 坐标和IMU） M（Mujoco环境 坐标和IMU）Ln 第几条腿：颜色代表状态 TauK是四个膝盖电机的实时物理输出扭矩（力矩）
 
-# 4.查看共享内存数据
+# 4. 查看共享内存数据
 
 > $ sudo ./see.sh
 >
