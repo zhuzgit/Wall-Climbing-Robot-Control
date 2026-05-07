@@ -213,7 +213,7 @@ see.sh 命令内容是
 
 # 6. 电机测试 r.sh dm.py
 
-
+sudo ./r.sh
 
 # 7. 视频压缩
 
