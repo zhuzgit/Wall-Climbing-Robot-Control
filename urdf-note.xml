@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+
+// 【注释】定义机器人的名称为 spider_robot (蜘蛛机器人)，并引入 xacro 命名空间
+<robot name="spider_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  // ==================== 材质与颜色定义 ====================
+  // 【注释】定义名为 grey(灰色) 的材质，RGBA 颜色值为半透明灰
+  <material name="grey"><color rgba="0.5 0.5 0.5 1"/></material>
+  // 【注释】定义名为 blue(蓝色) 的材质，RGBA 颜色值为深蓝
+  <material name="blue"><color rgba="0.2 0.2 0.8 1"/></material>
+
+  // ==================== 机器人躯干 (Base Link) ====================
+  <link name="base_link">
+    // 【注释】视觉外观：一个尺寸为 0.25 x 0.25 x 0.067 米的灰色长方体盒子
+    <visual><geometry><box size="0.25 0.25 0.067"/></geometry><material name="grey"/></visual>
+    // 【注释】碰撞模型：为了简化物理计算，碰撞箱的尺寸与视觉外观完全一致
+    <collision><geometry><box size="0.25 0.25 0.067"/></geometry></collision>
+    // 【注释】惯性参数：设定躯干质量为 2.0 kg，并配置了相应的惯性张量
+    <inertial><mass value="2.0"/><inertia ixx="0.011" ixy="0.0" ixz="0.0" iyy="0.011" iyz="0.0" izz="0.021"/></inertial>
+  </link>
+
+
+  // ==================== 第 1 条腿 (Leg 1) ====================
+  
+  // 【注释】1. 髋部横向关节：连接躯干和大腿电机
+  <joint name="rotational_motor-1" type="revolute">
+    <parent link="base_link"/><child link="armmotorlink-1"/>
+    // 【注释】设定该关节绕着局部的 Y 轴旋转
+    <axis xyz="0 1 0"/>
+    // 【注释】物理限制：最大输出力矩 27Nm，旋转角度限制在 -2.09 到 2.09 弧度，最大速度 5.45 rad/s
+    <limit effort="27" lower="-2.09" upper="2.09" velocity="5.45"/>
+    // 【注释】安装位置：位于主体的一个角上 (x=0.125, y=0.125, z=0.035)，并具有初始偏转角
+    <origin xyz="0.125 0.125 0.035" rpy="1.5708 0 0.7854"/>
+  </joint>
+  
+  // 【注释】髋部连杆 (电机外壳部分)
+  <link name="armmotorlink-1">
+    // 【注释】外观为一个蓝色的圆柱体
+    <visual><origin xyz="0 0.042 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry><material name="blue"/></visual>
+    // 【注释】质量为 0.2 kg
+    <inertial><mass value="0.2"/><inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+
+  // 【注释】2. 大腿俯仰关节：控制整个腿部的抬起和放下
+  <joint name="armmotor-1" type="revolute">
+    <parent link="armmotorlink-1"/><child link="kneemotorlink-1"/>
+    // 【注释】绕 Z 轴旋转
+    <axis xyz="0 0 1"/>
+    <limit effort="27" lower="-1.4" upper="1.57" velocity="5.45"/><origin xyz="0 0.042 0" rpy="0 0 0"/>
+  </joint>
+
+  // 【注释】大腿连杆 (包含大腿骨架和膝盖结构的组合体)
+  <link name="kneemotorlink-1">
+    // 【注释】包含两块几何体：一块是代表腿部骨架的较细圆柱，另一块是代表膝盖关节的较粗圆柱
+    <visual><origin xyz="0.09 0.01 0" rpy="0 1.57 0"/><geometry><cylinder radius="0.02" length="0.11"/></geometry></visual>
+    <visual><origin xyz="0.18 0 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry></visual>
+    // 【注释】质量为 0.3 kg
+    <inertial><mass value="0.3"/><inertia ixx="0.0005" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+
+  // 【注释】3. 膝盖俯仰关节：控制小腿的弯曲伸展
+  <joint name="kneemotor-1" type="revolute">
+    <parent link="kneemotorlink-1"/><child link="balllink-1"/><axis xyz="0 0 1"/>
+    <limit effort="27" lower="-0.9" upper="2" velocity="5.45"/><origin xyz="0.18 0 0" rpy="0 0 0"/>
+  </joint>
+
+  // 【注释】小腿连杆 (连接到脚踝)
+  <link name="balllink-1">
+    <visual><origin xyz="0 -0.105 0" rpy="1.57 0 0"/><geometry><cylinder radius="0.015" length="0.14"/></geometry></visual>
+    // 【注释】质量为 0.1 kg
+    <inertial><mass value="0.1"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+
+  // 【注释】4. 脚踝俯仰关节 (被动柔性关节)
+  <joint name="ankle_pitch-1" type="revolute">
+    <parent link="balllink-1"/><child link="ankle_dummy-1"/>
+    <origin xyz="0 -0.2 0" rpy="0 0 0"/><axis xyz="0 0 1"/>
+    // 【注释】脚踝关节力矩较小(5Nm)，活动范围较小(±0.52 rad)
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    // 【注释】dynamics：添加了阻尼(0.5)、摩擦(0.01)和弹簧刚度(15.0)，让脚踝接触地面时具有弹性缓冲效果
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+
+  // 【注释】虚拟脚踝连杆：因为 ROS/URDF 中一个关节只能有一个自由度，这里用一个无体积、质量极小的虚拟连杆来串联两个脚踝旋转，实现双自由度
+  <link name="ankle_dummy-1">
+    <inertial><mass value="0.01"/><inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/></inertial>
+  </link>
+
+  // 【注释】5. 脚踝侧翻关节 (被动柔性关节，绕 X 轴旋转)
+  <joint name="ankle_roll-1" type="revolute">
+    <parent link="ankle_dummy-1"/><child link="foot_pyramid-1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/><axis xyz="1 0 0"/>
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+  
+  // 【注释】脚掌连杆：蓝色的长方体，代表真正踩地的脚掌
+  <link name="foot_pyramid-1">
+    <visual><origin xyz="0 -0.01 0" rpy="0 0 0"/><geometry><box size="0.04 0.02 0.04"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.05"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+
+  // 【注释】6. 足底触点：通过一个固定关节(fixed)在脚掌下方绑定了一个坐标点(foot_1)，通常在程序里作为运动学逆解的末端执行器
+  <joint name="foot_joint_1" type="fixed">
+    <parent link="foot_pyramid-1"/><child link="foot_1"/>
+    <origin xyz="0 -0.02 0" rpy="1.5708 0 0"/>
+  </joint>
+  <link name="foot_1"/>
+
+
+  // ==================== 第 2 条腿 (Leg 2) ====================
+  // 【注释】除了安装位置（xyz 和 rpy）装在了主体的另一个角之外，内部所有物理参数都与第 1 条腿相同
+  
+  <joint name="rotational_motor-2" type="revolute">
+    <parent link="base_link"/><child link="armmotorlink-2"/><axis xyz="0 1 0"/>
+    <limit effort="27" lower="-2.09" upper="2.09" velocity="5.45"/><origin xyz="-0.125 0.125 0.035" rpy="1.5708 0 2.3562"/>
+  </joint>
+  <link name="armmotorlink-2">
+    <visual><origin xyz="0 0.042 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.2"/><inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="armmotor-2" type="revolute">
+    <parent link="armmotorlink-2"/><child link="kneemotorlink-2"/><axis xyz="0 0 1"/>
+    <limit effort="27" lower="-1.4" upper="1.57" velocity="5.45"/><origin xyz="0 0.042 0" rpy="0 0 0"/>
+  </joint>
+  <link name="kneemotorlink-2">
+    <visual><origin xyz="0.09 0.01 0" rpy="0 1.57 0"/><geometry><cylinder radius="0.02" length="0.11"/></geometry></visual>
+    <visual><origin xyz="0.18 0 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry></visual>
+    <inertial><mass value="0.3"/><inertia ixx="0.0005" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="kneemotor-2" type="revolute">
+    <parent link="kneemotorlink-2"/><child link="balllink-2"/><axis xyz="0 0 1"/>
+    <limit effort="27" lower="-0.9" upper="2" velocity="5.45"/><origin xyz="0.18 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="balllink-2">
+    <visual><origin xyz="0 -0.105 0" rpy="1.57 0 0"/><geometry><cylinder radius="0.015" length="0.14"/></geometry></visual>
+    <inertial><mass value="0.1"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+  <joint name="ankle_pitch-2" type="revolute">
+    <parent link="balllink-2"/><child link="ankle_dummy-2"/><origin xyz="0 -0.2 0" rpy="0 0 0"/><axis xyz="0 0 1"/>
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+  <link name="ankle_dummy-2"><inertial><mass value="0.01"/><inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/></inertial></link>
+  <joint name="ankle_roll-2" type="revolute">
+    <parent link="ankle_dummy-2"/><child link="foot_pyramid-2"/><origin xyz="0 0 0" rpy="0 0 0"/><axis xyz="1 0 0"/>
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+  <link name="foot_pyramid-2">
+    <visual><origin xyz="0 -0.01 0" rpy="0 0 0"/><geometry><box size="0.04 0.02 0.04"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.05"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+  <joint name="foot_joint_2" type="fixed">
+    <parent link="foot_pyramid-2"/><child link="foot_2"/><origin xyz="0 -0.02 0" rpy="1.5708 0 0"/>
+  </joint>
+  <link name="foot_2"/>
+
+
+  // ==================== 第 3 条腿 (Leg 3) ====================
+  // 【注释】安装在机器人的第三个角上
+  
+  <joint name="rotational_motor-3" type="revolute">
+    <parent link="base_link"/><child link="armmotorlink-3"/><axis xyz="0 1 0"/>
+    <limit effort="27" lower="-2.09" upper="2.09" velocity="5.45"/><origin xyz="-0.125 -0.125 0.035" rpy="1.5708 0 -2.3562"/>
+  </joint>
+  <link name="armmotorlink-3">
+    <visual><origin xyz="0 0.042 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.2"/><inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="armmotor-3" type="revolute">
+    <parent link="armmotorlink-3"/><child link="kneemotorlink-3"/><axis xyz="0 0 1"/>
+    <limit effort="27" lower="-1.4" upper="1.57" velocity="5.45"/><origin xyz="0 0.042 0" rpy="0 0 0"/>
+  </joint>
+  <link name="kneemotorlink-3">
+    <visual><origin xyz="0.09 0.01 0" rpy="0 1.57 0"/><geometry><cylinder radius="0.02" length="0.11"/></geometry></visual>
+    <visual><origin xyz="0.18 0 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry></visual>
+    <inertial><mass value="0.3"/><inertia ixx="0.0005" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="kneemotor-3" type="revolute">
+    <parent link="kneemotorlink-3"/><child link="balllink-3"/><axis xyz="0 0 1"/>
+    <limit effort="27" lower="-0.9" upper="2" velocity="5.45"/><origin xyz="0.18 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="balllink-3">
+    <visual><origin xyz="0 -0.105 0" rpy="1.57 0 0"/><geometry><cylinder radius="0.015" length="0.14"/></geometry></visual>
+    <inertial><mass value="0.1"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+  <joint name="ankle_pitch-3" type="revolute">
+    <parent link="balllink-3"/><child link="ankle_dummy-3"/><origin xyz="0 -0.2 0" rpy="0 0 0"/><axis xyz="0 0 1"/>
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+  <link name="ankle_dummy-3"><inertial><mass value="0.01"/><inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/></inertial></link>
+  <joint name="ankle_roll-3" type="revolute">
+    <parent link="ankle_dummy-3"/><child link="foot_pyramid-3"/><origin xyz="0 0 0" rpy="0 0 0"/><axis xyz="1 0 0"/>
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+  <link name="foot_pyramid-3">
+    <visual><origin xyz="0 -0.01 0" rpy="0 0 0"/><geometry><box size="0.04 0.02 0.04"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.05"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+  <joint name="foot_joint_3" type="fixed">
+    <parent link="foot_pyramid-3"/><child link="foot_3"/><origin xyz="0 -0.02 0" rpy="1.5708 0 0"/>
+  </joint>
+  <link name="foot_3"/>
+
+
+  // ==================== 第 4 条腿 (Leg 4) ====================
+  // 【注释】安装在机器人的第四个角上，全文件结束
+  
+  <joint name="rotational_motor-4" type="revolute">
+    <parent link="base_link"/><child link="armmotorlink-4"/><axis xyz="0 1 0"/>
+    <limit effort="27" lower="-2.09" upper="2.09" velocity="5.45"/><origin xyz="0.125 -0.125 0.035" rpy="1.5708 0 -0.7854"/>
+  </joint>
+  <link name="armmotorlink-4">
+    <visual><origin xyz="0 0.042 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.2"/><inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="armmotor-4" type="revolute">
+    <parent link="armmotorlink-4"/><child link="kneemotorlink-4"/><axis xyz="0 0 1"/>
+    <limit effort="27" lower="-1.4" upper="1.57" velocity="5.45"/><origin xyz="0 0.042 0" rpy="0 0 0"/>
+  </joint>
+  <link name="kneemotorlink-4">
+    <visual><origin xyz="0.09 0.01 0" rpy="0 1.57 0"/><geometry><cylinder radius="0.02" length="0.11"/></geometry></visual>
+    <visual><origin xyz="0.18 0 0"/><geometry><cylinder radius="0.03" length="0.057"/></geometry></visual>
+    <inertial><mass value="0.3"/><inertia ixx="0.0005" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.0001"/></inertial>
+  </link>
+  <joint name="kneemotor-4" type="revolute">
+    <parent link="kneemotorlink-4"/><child link="balllink-4"/><axis xyz="0 0 1"/>
+    <limit effort="27" lower="-0.9" upper="2" velocity="5.45"/><origin xyz="0.18 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="balllink-4">
+    <visual><origin xyz="0 -0.105 0" rpy="1.57 0 0"/><geometry><cylinder radius="0.015" length="0.14"/></geometry></visual>
+    <inertial><mass value="0.1"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+  <joint name="ankle_pitch-4" type="revolute">
+    <parent link="balllink-4"/><child link="ankle_dummy-4"/><origin xyz="0 -0.2 0" rpy="0 0 0"/><axis xyz="0 0 1"/>
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+  <link name="ankle_dummy-4"><inertial><mass value="0.01"/><inertia ixx="1e-5" ixy="0.0" ixz="0.0" iyy="1e-5" iyz="0.0" izz="1e-5"/></inertial></link>
+  <joint name="ankle_roll-4" type="revolute">
+    <parent link="ankle_dummy-4"/><child link="foot_pyramid-4"/><origin xyz="0 0 0" rpy="0 0 0"/><axis xyz="1 0 0"/>
+    <limit effort="5" lower="-0.52" upper="0.52" velocity="10"/>
+    <dynamics damping="0.5" friction="0.01" spring_stiffness="15.0" spring_reference="0.0"/>
+  </joint>
+  <link name="foot_pyramid-4">
+    <visual><origin xyz="0 -0.01 0" rpy="0 0 0"/><geometry><box size="0.04 0.02 0.04"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.05"/><inertia ixx="1e-4" ixy="0.0" ixz="0.0" iyy="1e-4" iyz="0.0" izz="1e-4"/></inertial>
+  </link>
+  <joint name="foot_joint_4" type="fixed">
+    <parent link="foot_pyramid-4"/><child link="foot_4"/><origin xyz="0 -0.02 0" rpy="1.5708 0 0"/>
+  </joint>
+  <link name="foot_4"/>
+
+</robot>
